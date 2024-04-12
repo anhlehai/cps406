@@ -156,15 +156,16 @@ public class ClubGUI extends JFrame implements ActionListener {
                     LogInGUI newWindow1 = new LogInGUI(myClub);
                     newWindow1.treasurerLogin(); 
                     break;
-                case "member":
-                    this.dispose(); 
-                    LogInGUI newWindow2 = new LogInGUI(myClub);
-                    newWindow2.memberLogin(); 
-                    break;
+                
                 case "coach":
                     this.dispose(); 
+                    LogInGUI newWindow2 = new LogInGUI(myClub);
+                    newWindow2.coachLogin(); 
+                    break;
+                default:
+                    this.dispose(); 
                     LogInGUI newWindow3 = new LogInGUI(myClub);
-                    newWindow3.coachLogin(); 
+                    newWindow3.memberLogin(); 
                     break;
             }
             System.out.println(username);

@@ -2,9 +2,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,6 +22,7 @@ public class LogInGUI implements ActionListener{
     JButton showMembersButton;
     JButton showMemsButton;
     JButton sendMessage;
+    JButton financeReportButton;
 
     JTextArea message;
 
@@ -58,6 +62,11 @@ public class LogInGUI implements ActionListener{
         showMembersButton.addActionListener(this);
         showMembersButton.setBounds(50,600,200,50);
 
+        financeReportButton = new JButton();
+        financeReportButton.setText("Finance Report");
+        financeReportButton.addActionListener(this);
+        financeReportButton.setBounds(800, 600, 200, 50);
+
         label.setBounds(100, 0, 300, 300);
         //label.setText("You're a treasurer");
         label.setForeground(Color.WHITE);
@@ -69,6 +78,7 @@ public class LogInGUI implements ActionListener{
         frame.add(sortByTimesPaidButton);
         frame.add(sortByTimesAttendButton);
         frame.add(showMembersButton);
+        frame.add(financeReportButton);
         frame.setVisible(true);
     }
 
@@ -139,13 +149,16 @@ public class LogInGUI implements ActionListener{
             System.out.println(myClub);
         }
         if(e.getSource()==showMembersButton){
-            originClub.showMembers();
+            originClub.getMemberList();
         }
         if(e.getSource()==showMemsButton){
             originClub.showMembers();
         }
         if(e.getSource()==sendMessage){
             System.out.println(message.getText());
+        }
+        if(e.getSource()==financeReportButton){
+            new FinancialTracker(myClub);
         }
     }
 

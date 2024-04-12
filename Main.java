@@ -90,29 +90,25 @@ public class Main {
                 String[] coach_inattendance = line.split(",");
                 myClub.getCoach().setMonthlyInattendance(i, Integer.parseInt(coach_inattendance[1]));
                 myClub.getCoach().setMonthlySalary(i, Integer.parseInt(coach_inattendance[3].substring(0,2)));
+                if(coach_inattendance[4].equals("unpaid")){
+                    myClub.getCoach().setUnpaidMonth(i, true);
+                }else{
+                    myClub.getCoach().setUnpaidMonth(i, false);
+                }
             }
             coach_br.close();
         }   
         catch (IOException e) {
             e.printStackTrace();
         }
-        FinancialTracker financialTracker = new FinancialTracker(myClub);
+        //FinancialTracker financialTracker = new FinancialTracker(myClub);
         new ClubGUI(myClub);
         
         ClubApp newClub = new ClubApp(myClub);
         System.out.println("\nReminders:");
         newClub.updateMemberList();
         
-        int test_month = 4;
-        int test_var_cost = 0;
         
-        myClub.getCoach().setPaidStatus(false);
-        // note that unpaid salary is from the prev month; if coach wasn't paid for the current month, unpaid salary is still 0, but next month can be set to the value
-        myClub.getCoach().setUnpaidSalary(0);
-        System.out.println();
-        System.out.println(myClub.getExpenses(test_month, test_var_cost));
-        System.out.println(myClub.getRevenue(test_month));
-        System.out.println(myClub.getProfit(test_month, test_var_cost));
     }
 }
 
@@ -323,7 +319,17 @@ class FinancialTracker {
     public FinancialTracker(ClubApp club) {
         this.club = club;
         records = new HashMap<>();
+        File file = new File("financial_records.txt");
+        
+            // Delete the existing file
+            if (file.exists()) {
+                file.delete();
+            }
         logFinancialData();
+        
+           
+        
+    
     }
 
     private void logFinancialData() {
@@ -333,12 +339,17 @@ class FinancialTracker {
             double revenue = club.getRevenue(month.getValue());
             double expenses = club.getExpenses(month.getValue(),0);
             double profit = club.getProfit(month.getValue(),0);
-            logMonth(month, revenue, expenses, profit);
+            double coachUnpaid = 0;
+            boolean monthUnpaid = club.getCoach().getUnpaidMonth()[month.getValue()-1];
+            if(monthUnpaid){
+                coachUnpaid = club.getCoach().getMonthlySalary()[month.getValue()-1];
+            }
+            logMonth(month, revenue, expenses, profit, coachUnpaid);
         }
     }
 
-    public void logMonth(Month month, double totalRevenue, double totalExpenses, double profit) {
-        MonthlyFinancialRecord record = new MonthlyFinancialRecord(month, totalRevenue, totalExpenses, profit);
+    public void logMonth(Month month, double totalRevenue, double totalExpenses, double profit, double coachUnpaid) {
+        MonthlyFinancialRecord record = new MonthlyFinancialRecord(month, totalRevenue, totalExpenses, profit, coachUnpaid);
         records.put(month, record);
         // Optionally, save to a text file
         saveToFile(record);
@@ -360,12 +371,14 @@ class MonthlyFinancialRecord {
     private double totalRevenue;
     private double totalExpenses;
     private double profit;
+    private double coachUnpaid;
 
-    public MonthlyFinancialRecord(Month month, double totalRevenue, double totalExpenses, double profit) {
+    public MonthlyFinancialRecord(Month month, double totalRevenue, double totalExpenses, double profit, double coachUnpaid) {
         this.month = month;
         this.totalRevenue = totalRevenue;
         this.totalExpenses = totalExpenses;
         this.profit = profit;
+        this.coachUnpaid= coachUnpaid;
     }
 
     public double getProfit() {
@@ -374,7 +387,7 @@ class MonthlyFinancialRecord {
 
     @Override
     public String toString() {
-        return month + ": Revenue - $" + totalRevenue + ", Expenses - $" + totalExpenses + ", Profit - $" + profit;
+        return month + ": Revenue - $" + totalRevenue + ", Expenses - $" + totalExpenses + ", Profit - $" + profit + ", Coach unpaid - $" + coachUnpaid;
     }
 }
 
@@ -388,6 +401,7 @@ class Coach {
     public int[] monthly_inattendance = new int[12];
     public int[] monthly_salary = new int[12];
     public boolean paid_status;
+    public boolean[] unpaidMonth = new boolean[12];
 
     public Coach(String first, String last, String phone, String address, int coach_salary, int unpaid_salary, boolean paid_status) {
         this.first_name = first;
@@ -420,6 +434,15 @@ class Coach {
     public void setMonthlyInattendance(int month_num, int new_monthly_inattendance) {
         if (1 <= month_num && month_num <= 12) {
             this.monthly_inattendance[month_num-1] = new_monthly_inattendance;
+        }
+    }
+
+    public boolean[] getUnpaidMonth(){
+        return unpaidMonth;
+    }
+    public void setUnpaidMonth(int month_num, boolean status){
+        if (1 <= month_num && month_num <= 12) {
+            this.unpaidMonth[month_num-1] = status;
         }
     }
 
