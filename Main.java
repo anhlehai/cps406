@@ -5,11 +5,18 @@
 
 import java.io.*;
 import java.util.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.Month;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
  
 public class Main {
     public static void main(String []args) throws Exception {
         
         ClubApp myClub = new ClubApp();
+        
         
         // The following reads the member_list CSV file and creates members based on the data
         String line = "";
@@ -89,13 +96,13 @@ public class Main {
         catch (IOException e) {
             e.printStackTrace();
         }
-
+        FinancialTracker financialTracker = new FinancialTracker(myClub);
         new ClubGUI(myClub);
-
+        
         ClubApp newClub = new ClubApp(myClub);
         System.out.println("\nReminders:");
         newClub.updateMemberList();
-
+        
         int test_month = 4;
         int test_var_cost = 0;
         
@@ -305,6 +312,69 @@ class ClubApp {
     //Leo's taks
     public void getMemberList(){
         System.out.println(this.toString());
+    }
+    
+    //Scott's task
+}    
+class FinancialTracker {
+    private Map<Month, MonthlyFinancialRecord> records;
+    private ClubApp club; // ClubApp class is available
+
+    public FinancialTracker(ClubApp club) {
+        this.club = club;
+        records = new HashMap<>();
+        logFinancialData();
+    }
+
+    private void logFinancialData() {
+        Month[] months = {Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER};
+
+        for (Month month : months) {
+            double revenue = club.getRevenue(month.getValue());
+            double expenses = club.getExpenses(month.getValue(),0);
+            double profit = club.getProfit(month.getValue(),0);
+            logMonth(month, revenue, expenses, profit);
+        }
+    }
+
+    public void logMonth(Month month, double totalRevenue, double totalExpenses, double profit) {
+        MonthlyFinancialRecord record = new MonthlyFinancialRecord(month, totalRevenue, totalExpenses, profit);
+        records.put(month, record);
+        // Optionally, save to a text file
+        saveToFile(record);
+    }
+
+    private void saveToFile(MonthlyFinancialRecord record) {
+        try (FileWriter writer = new FileWriter("financial_records.txt", true)) {
+            writer.write(record.toString() + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Add methods to retrieve profit information as needed
+}
+
+class MonthlyFinancialRecord {
+    private Month month;
+    private double totalRevenue;
+    private double totalExpenses;
+    private double profit;
+
+    public MonthlyFinancialRecord(Month month, double totalRevenue, double totalExpenses, double profit) {
+        this.month = month;
+        this.totalRevenue = totalRevenue;
+        this.totalExpenses = totalExpenses;
+        this.profit = profit;
+    }
+
+    public double getProfit() {
+        return profit;
+    }
+
+    @Override
+    public String toString() {
+        return month + ": Revenue - $" + totalRevenue + ", Expenses - $" + totalExpenses + ", Profit - $" + profit;
     }
 }
 
@@ -608,5 +678,4 @@ class Member implements Comparable<Member> {
     public int compareTo(Member member2) {
         return this.times_paid - member2.times_paid;
     }
-
 }
