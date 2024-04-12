@@ -2,12 +2,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
+
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -142,7 +139,7 @@ public class LogInGUI implements ActionListener{
             System.out.println(myClub);
         }
         if(e.getSource()==showMembersButton){
-            originClub.getMemberList();
+            originClub.showMembers();
         }
         if(e.getSource()==showMemsButton){
             originClub.showMembers();
