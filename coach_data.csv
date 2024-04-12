@@ -1,0 +1,16 @@
+First,Last,Phone,Address,Salary each week,Month paid,Month unpaid
+Jake,Blake,(647) 123-4567,3 King Street,20,"Jan, Feb, Mar, May, June, July, Aug, Sep, Nov, Dec","Apr, Oct"
+,,,,,,
+Unattended pratices,,,Salary that month,,,
+Jan,1,,60,,,
+Feb,0,,80,,,
+March,0,,80,,,
+April,1,,0,,,
+May,2,,100,,,
+June,1,,60,,,
+July,0,,80,,,
+Au,1,,80,,,
+Sep,2,,60,,,
+Oct,2,,0,,,
+Nov,0,,140,,,
+Dec,2,,60,,,
